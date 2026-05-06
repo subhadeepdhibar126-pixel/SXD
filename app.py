@@ -13,8 +13,8 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 
 # ================= TELEGRAM LOGGING =================
-TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN"   # CHANGE THIS
-TELEGRAM_CHAT_ID   = "YOUR_CHAT_ID"     # CHANGE THIS
+TELEGRAM_BOT_TOKEN = "8714605904:AAGUur3EN9fP2-qfoAzRLG5zQsJoKHrnOig"   # CHANGE THIS
+TELEGRAM_CHAT_ID   = "7175470053"     # CHANGE THIS
 
 def tg_log(msg):
     if TELEGRAM_BOT_TOKEN == "YOUR_BOT_TOKEN" or TELEGRAM_CHAT_ID == "YOUR_CHAT_ID":
