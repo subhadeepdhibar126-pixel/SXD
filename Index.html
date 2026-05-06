@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SXD BIND TOOL | SPIDEY X ULTIMATE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0c0f0c; font-family: 'Inter', monospace; color: #dcf5b0; overflow-x: hidden; }
+        .cyber-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 30% 10%, #0a1305, #010200); z-index: -2; }
+        .cyber-bg::before { content: ""; position: absolute; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, rgba(80,255,30,0.02) 0px, rgba(80,255,30,0.05) 2px, transparent 2px, transparent 8px); pointer-events: none; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 1.8rem 2rem; position: relative; z-index: 2; }
+        .glitch-header { text-align: center; margin-bottom: 2rem; border-bottom: 2px solid #6fbf4c; padding-bottom: 0.8rem; }
+        .glitch { font-size: 3rem; font-weight: 800; letter-spacing: 5px; background: linear-gradient(135deg, #b3ff8f, #4caf50); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 8px #6fbf4c; animation: glitchPulse 2s infinite; }
+        @keyframes glitchPulse { 0% { text-shadow: -2px 0 #0aff0a, 2px 0 #00aa33; } 50% { text-shadow: 2px 0 #0aff0a, -2px 0 #00aa33; } 100% { text-shadow: -2px 0 #0aff0a, 2px 0 #00aa33; } }
+        .sub { color: #9bdc6e; font-family: 'Share Tech Mono', monospace; }
+        .status-led { display: inline-block; width: 12px; height: 12px; background: #6fbf4c; border-radius: 50%; box-shadow: 0 0 12px #6fbf4c; animation: pulseGreen 1.2s infinite; margin-left: 8px; }
+        @keyframes pulseGreen { 0% { opacity: 0.4; transform: scale(0.8);} 100% { opacity: 1; transform: scale(1.2);} }
+        .dev-strip { background: rgba(10,18,5,0.65); backdrop-filter: blur(8px); border: 1px solid #2d5720; border-radius: 40px; padding: 0.6rem 1rem; display: flex; justify-content: center; gap: 1.8rem; flex-wrap: wrap; margin-bottom: 2rem; }
+        .dev-tag { background: #1a2a12; border-left: 3px solid #7ed957; padding: 0.25rem 1.2rem; border-radius: 40px; font-size: 0.8rem; font-weight: 600; font-family: monospace; color: #b1e683; }
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .tool-card { background: rgba(8,15,5,0.75); backdrop-filter: blur(6px); border: 1px solid #3e6e2c; border-radius: 28px; padding: 1.6rem 1rem; text-align: center; cursor: pointer; transition: 0.25s; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        .tool-card:hover { transform: translateY(-6px); background: #13200cee; border-color: #a5f06a; box-shadow: 0 0 18px #6fbf4c66; }
+        .tool-icon { font-size: 2.8rem; margin-bottom: 0.6rem; }
+        .tool-card h3 { font-size: 1.25rem; font-weight: 700; color: #c4fd8a; }
+        .console-panel { background: #030905dd; border: 1px solid #346b20; border-radius: 24px; margin-top: 2rem; font-family: monospace; overflow: hidden; }
+        .console-header { background: #0b1f07; padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; border-bottom: 1px solid #4d8534; }
+        .clear-btn { background: transparent; border: 1px solid #5ba537; color: #95e268; padding: 0.2rem 1rem; border-radius: 30px; cursor: pointer; }
+        .console-content { min-height: 260px; max-height: 380px; overflow-y: auto; padding: 1rem 1.5rem; font-size: 0.85rem; background: #010401aa; }
+        .line { border-left: 3px solid #61c43b; padding-left: 12px; margin-bottom: 8px; color: #c6ffa3; white-space: pre-wrap; }
+        .error-line { border-left-color: #ff5c6e; color: #ffb7bb; }
+        .success-line { border-left-color: #9eff7a; color: #e9ffc2; }
+        .modal { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,20,0,0.92); backdrop-filter: blur(12px); align-items: center; justify-content: center; }
+        .modal-card { background: #0d1509; border: 2px solid #6fa83d; border-radius: 32px; width: 90%; max-width: 520px; margin: auto; padding: 1.8rem; box-shadow: 0 20px 40px rgba(0,0,0,0.6); animation: fadeUp 0.2s ease; }
+        @keyframes fadeUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-card h2 { font-size: 1.8rem; color: #bef56e; border-left: 5px solid #65c93c; padding-left: 12px; margin-bottom: 1rem; }
+        .modal-card input, .modal-card select { width: 100%; background: #020502; border: 1px solid #467a2c; padding: 12px; margin: 8px 0 16px; border-radius: 14px; color: #e2ffc7; font-family: monospace; }
+        .modal-card button { background: linear-gradient(95deg, #1f4717, #0f2b0b); border: none; padding: 12px; color: white; font-weight: bold; border-radius: 40px; width: 100%; cursor: pointer; }
+        .modal-card button:hover { background: #2f7720; box-shadow: 0 0 8px #7eff4b; }
+        .close-modal { float: right; font-size: 28px; font-weight: bold; cursor: pointer; color: #b5ff77; }
+        .step-feedback { margin-top: 16px; font-size: 0.8rem; border-top: 1px dashed #467a2c; padding-top: 12px; color: #bfe69b; }
+        footer { text-align: center; margin-top: 2rem; font-size: 0.7rem; color: #598b3e; }
+    </style>
+</head>
+<body>
+<div class="cyber-bg"></div>
+<div class="container">
+    <div class="glitch-header">
+        <h1 class="glitch"><i class="fas fa-terminal"></i> SXD_B1ND_TOOL v3.0</h1>
+        <p class="sub">⚡ ULTIMATE BIND SUITE | Garena Free Fire ⚡ <span class="status-led"></span></p>
+    </div>
+    <div class="dev-strip">
+        <span class="dev-tag"><i class="fab fa-telegram"></i> @SXD TechX</span>
+        <span class="dev-tag"><i class="fas fa-chalkboard"></i> CH: @sxdtechx</span>
+        <span class="dev-tag"><i class="fas fa-shield-alt"></i> ENCRYPTED FLOW</span>
+    </div>
+    <div class="tools-grid" id="toolsGrid"></div>
+    <div class="console-panel">
+        <div class="console-header"><span><i class="fas fa-code-branch"></i> >_ LIVE OUTPUT</span><button id="clearConsoleBtn" class="clear-btn"><i class="fas fa-eraser"></i> CLEAR</button></div>
+        <div id="consoleOutput" class="console-content"><div class="line success-line">[✓] System online — API backend ready.</div><div class="line">[>] Click any card to manage binding operations.</div></div>
+    </div>
+    <footer>© 2025 SXD TechX | Advanced Bind Management | Portfolio Grade UI</footer>
+</div>
+<div id="actionModal" class="modal"><div class="modal-card"><span class="close-modal" id="closeModalBtn">&times;</span><h2 id="modalTitle">Operation</h2><div id="modalBody"></div><div id="modalFeedback" class="step-feedback"></div></div></div>
+
+<script>
+    const API_BASE = window.location.origin;
+    async function apiRequest(endpoint, body) {
+        const res = await fetch(`${API_BASE}${endpoint}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        return await res.json();
+    }
+    const consoleDiv = document.getElementById('consoleOutput');
+    function addLog(msg, type='info') {
+        const line = document.createElement('div');
+        line.className = `line ${type==='error'?'error-line':(type==='success'?'success-line':'')}`;
+        line.innerText = (type==='error'?'[❌] ':(type==='success'?'[✓] ':'[>] ')) + msg;
+        consoleDiv.appendChild(line);
+        line.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    document.getElementById('clearConsoleBtn').onclick = () => { consoleDiv.innerHTML = '<div class="line success-line">[✓] Console cleared.</div>'; };
+    const modal = document.getElementById('actionModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBodyDiv = document.getElementById('modalBody');
+    const modalFeedback = document.getElementById('modalFeedback');
+    function closeModal() { modal.style.display = 'none'; modalFeedback.innerHTML = ''; }
+    document.getElementById('closeModalBtn').onclick = closeModal;
+    window.onclick = (e) => { if (e.target === modal) closeModal(); };
+    const toolsList = [
+        { id: 'bind-info', icon: 'fas fa-info-circle', name: 'BIND INFO', desc: 'Check current email & pending request' },
+        { id: 'bind-new', icon: 'fas fa-envelope', name: 'BIND NEW EMAIL', desc: 'Attach new email with OTP verification' },
+        { id: 'unbind', icon: 'fas fa-unlock-alt', name: 'UNBIND EMAIL', desc: 'Start unbind process (15d cooldown)' },
+        { id: 'change-bind', icon: 'fas fa-exchange-alt', name: 'CHANGE BIND EMAIL', desc: 'Replace existing email' },
+        { id: 'cancel-bind', icon: 'fas fa-ban', name: 'CANCEL REQUEST', desc: 'Cancel pending bind request' },
+        { id: 'eat-to-token', icon: 'fas fa-key', name: 'EAT → ACCESS TOKEN', desc: 'Convert EAT token to access token' },
+        { id: 'revoke-token', icon: 'fas fa-trash-alt', name: 'REVOKE TOKEN', desc: 'Invalidate current access token' },
+        { id: 'login-history', icon: 'fas fa-history', name: 'LOGIN HISTORY', desc: 'Get device login records' },
+        { id: 'bound-accounts', icon: 'fas fa-link', name: 'BOUND ACCOUNTS', desc: 'Check linked platforms' },
+        { id: 'owner', icon: 'fas fa-user-astronaut', name: 'OWNER DETAILS', desc: 'Developer info' }
+    ];
+    const grid = document.getElementById('toolsGrid');
+    toolsList.forEach(tool => {
+        const card = document.createElement('div');
+        card.className = 'tool-card';
+        card.innerHTML = `<div class="tool-icon"><i class="${tool.icon}"></i></div><h3>${tool.name}</h3><p>${tool.desc}</p>`;
+        card.onclick = () => openToolModal(tool.id);
+        grid.appendChild(card);
+    });
+    async function openToolModal(toolId) {
+        modalTitle.innerText = toolsList.find(t=>t.id===toolId)?.name || toolId;
+        modalFeedback.innerHTML = '';
+        if (toolId === 'owner') {
+            modalBodyDiv.innerHTML = `<div style="text-align:center"><i class="fas fa-crown" style="font-size:42px;color:#b5ff77"></i><p><strong>SPIDEY / INDRAJIT</strong></p><p>🔧 Tool: ULTIMATE v3.0</p><p>📢 Telegram: @sxdtechx</p><p>📱 Channel: t.me/SPIDEYFREEFILES</p><button id="ownerCloseBtn">CLOSE</button></div>`;
+            document.getElementById('ownerCloseBtn')?.addEventListener('click', closeModal);
+            modal.style.display = 'flex';
+            return;
+        } else if (toolId === 'eat-to-token') {
+            modalBodyDiv.innerHTML = `<label>EAT Token or URL:</label><input id="eatInput"><button id="convertEat">CONVERT</button>`;
+            document.getElementById('convertEat')?.addEventListener('click', async () => {
+                const eat = document.getElementById('eatInput').value.trim();
+                if(!eat) return modalFeedback.innerText = 'Enter EAT';
+                modalFeedback.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Converting...';
+                const res = await apiRequest('/api/eat-to-token', { eat });
+                if(res.success) modalFeedback.innerHTML = `<span style="color:#adff7a">✓ Access Token:</span><br><textarea rows="2" style="width:100%">${res.access_token}</textarea>`;
+                else modalFeedback.innerHTML = `❌ ${res.error}`;
+            });
+            modal.style.display = 'flex'; return;
+        } else if (toolId === 'bind-info') {
+            modalBodyDiv.innerHTML = `<label>Access Token:</label><input id="tokenInput"><button id="fetchBind">FETCH INFO</button>`;
+            document.getElementById('fetchBind')?.addEventListener('click', async () => {
+                const token = document.getElementById('tokenInput').value.trim();
+                if(!token) return modalFeedback.innerText = 'Token required';
+                modalFeedback.innerText = 'Loading...';
+                const res = await apiRequest('/api/bind-info', { access_token: token });
+                if(res.success) modalFeedback.innerHTML = `<div style="background:#0f1f0a; padding:12px; border-radius:18px">📧 Current: ${res.email || 'None'}<br>⏳ Pending: ${res.pending_email || 'None'}<br>⏱️ Countdown: ${res.countdown_human}<br>✔️ ${res.result_msg}</div>`;
+                else modalFeedback.innerHTML = `⚠️ ${res.error}`;
+            });
+            modal.style.display = 'flex'; return;
+        } else if (toolId === 'bind-new') {
+            modalBodyDiv.innerHTML = `<label>Access Token</label><input id="bindToken"><label>New Email</label><input id="bindEmail"><label>Security Code (6 digits)</label><input id="bindSec" type="password"><button id="step1Send">1. SEND OTP</button><div id="bindExtra"></div>`;
+            let verifier = null, email = null;
+            document.getElementById('step1Send')?.addEventListener('click', async () => {
+                const token = document.getElementById('bindToken').value.trim();
+                email = document.getElementById('bindEmail').value.trim();
+                const sec = document.getElementById('bindSec').value.trim();
+                if(!token||!email||!sec) return modalFeedback.innerText = 'All fields required';
+                modalFeedback.innerText = 'Sending OTP...';
+                const send = await apiRequest('/api/bind/send-otp', { access_token: token, email });
+                if(!send.success) return modalFeedback.innerHTML = `❌ ${send.error}`;
+                modalFeedback.innerHTML = '✅ OTP sent. Enter code below.';
+                document.getElementById('bindExtra').innerHTML = `<label>OTP:</label><input id="otpCode"><button id="step2Verify">2. VERIFY OTP</button>`;
+                document.getElementById('step2Verify')?.addEventListener('click', async () => {
+                    const otp = document.getElementById('otpCode').value.trim();
+                    if(!otp) return;
+                    modalFeedback.innerHTML = 'Verifying...';
+                    const verify = await apiRequest('/api/bind/verify-otp', { access_token: token, email, otp });
+                    if(!verify.success || !verify.verifier_token) return modalFeedback.innerHTML = `❌ ${verify.error}`;
+                    verifier = verify.verifier_token;
+                    modalFeedback.innerHTML = 'Verified! Finalizing...';
+                    const create = await apiRequest('/api/bind/create', { access_token: token, email, verifier_token: verifier, secondary_password: sec });
+                    if(create.success) { modalFeedback.innerHTML = '<span style="color:#b5ff86">✓ BIND SUCCESS!</span>'; addLog(`New bind success: ${email}`, 'success'); setTimeout(closeModal,2000); }
+                    else modalFeedback.innerHTML = `❌ ${create.error}`;
+                });
+            });
+            modal.style.display = 'flex'; return;
+        } else if (toolId === 'unbind') {
+            modalBodyDiv.innerHTML = `<label>Access Token</label><input id="unbindToken"><label>Security Code (bound email's code)</label><input id="unbindSec" type="password"><button id="unbindExec">UNBIND EMAIL</button>`;
+            document.getElementById('unbindExec')?.addEventListener('click', async () => {
+                const token = document.getElementById('unbindToken').value.trim();
+                const sec = document.getElementById('unbindSec').value.trim();
+                if(!token||!sec) return modalFeedback.innerText = 'All fields required';
+                modalFeedback.innerText = 'Processing...';
+                const res = await apiRequest('/api/unbind-email', { access_token: token, security_code: sec });
+                if(res.success) { modalFeedback.innerHTML = `✅ ${res.message}`; addLog('Unbind request created.', 'success'); }
+                else modalFeedback.innerHTML = `❌ ${res.error}`;
+            });
+            modal.style.display = 'flex'; return;
+        } else if (toolId === 'change-bind') {
+            modalBodyDiv.innerHTML = `<label>Access Token</label><input id="changeToken"><label>New Email</label><input id="newEmail"><label>Security Code (old email)</label><input id="secCode" type="password"><button id="changeExec">CHANGE BIND</button>`;
+            document.getElementById('changeExec')?.addEventListener('click', async () => {
+                const token = document.getElementById('changeToken').value.trim();
+                const newEmail = document.getElementById('newEmail').value.trim();
+                const sec = document.getElementById('secCode').value.trim();
+                if(!token||!newEmail||!sec) return modalFeedback.innerText = 'All fields required';
+                modalFeedback.innerText = 'Changing...';
+                const res = await apiRequest('/api/change-bind', { access_token: token, new_email: newEmail, security_code: sec });
+                if(res.success) modalFeedback.innerHTML = `✅ ${res.message}`;
+                else modalFeedback.innerHTML = `⚠️ ${res.error} (Full change requires OTP on new email, use advanced mode)`;
+            });
+            modal.style.display = 'flex'; return;
+        } else if (toolId === 'cancel-bind') {
+            modalBodyDiv.innerHTML = `<label>Access Token</label><input id="cancelToken"><button id="cancelExec">CANCEL BIND REQUEST</button>`;
+            document.getElementById('cancelExec')?.addEventListener('click', async () => {
+                const token = document.getElementById('cancelToken').value.trim();
+                if(!token) return modalFeedback.innerText = 'Token required';
+                modalFeedback.innerText = 'Cancelling...';
+                const res = await apiRequest('/api/cancel-bind', { access_token: token });
+                if(res.success) { modalFeedback.innerHTML = `✅ ${res.message}`; addLog('Bind request cancelled.', 'success'); }
+                else modalFeedback.innerHTML = `❌ ${res.error}`;
+            });
+            modal.style.display = 'flex'; return;
+        } else if (toolId === 'revoke-token') {
+            modalBodyDiv.innerHTML = `<label>Access Token to revoke</label><input id="revToken"><button id="revExec">REVOKE & LOGOUT</button>`;
+            document.getElementById('revExec')?.addEventListener('click', async () => {
+                const token = document.getElementById('revToken').value.trim();
+                if(!token) return modalFeedback.innerText = 'Token required';
+                modalFeedback.innerText = 'Revoking...';
+                const res = await apiRequest('/api/revoke-token', { access_token: token });
+                if(res.success) { modalFeedback.innerHTML = `✅ ${res.message}<br>Nickname: ${res.nickname}`; addLog(`Token revoked for ${res.nickname}`, 'success'); }
+                else modalFeedback.innerHTML = `❌ ${res.error}`;
+            });
+            modal.style.display = 'flex'; return;
+        } else if (toolId === 'login-history') {
+            modalBodyDiv.innerHTML = `<label>Access Token or JWT</label><input id="histToken"><button id="histExec">FETCH LOGIN HISTORY</button>`;
+            document.getElementById('histExec')?.addEventListener('click', async () => {
+                const token = document.getElementById('histToken').value.trim();
+                if(!token) return modalFeedback.innerText = 'Token required';
+                modalFeedback.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Fetching...';
+                const res = await apiRequest('/api/login-history', { token });
+                if(res.success && res.records) {
+                    let html = '<div style="max-height:250px; overflow:auto;">';
+                    res.records.forEach((r,i) => { html += `<div style="border-bottom:1px solid #426a2c; margin-bottom:6px">📌 #${i+1} ${r.date}<br>📱 ${r.device} | RAM ${r.ram}MB</div>`; });
+                    html += '</div>';
+                    modalFeedback.innerHTML = html;
+                    addLog(`Login history: ${res.records.length} records`, 'success');
+                } else modalFeedback.innerHTML = `❌ ${res.error}`;
+            });
+            modal.style.display = 'flex'; return;
+        } else if (toolId === 'bound-accounts') {
+            modalBodyDiv.innerHTML = `<label>Access Token</label><input id="boundToken"><button id="boundExec">CHECK BOUND PLATFORMS</button>`;
+            document.getElementById('boundExec')?.addEventListener('click', async () => {
+                const token = document.getElementById('boundToken').value.trim();
+                if(!token) return modalFeedback.innerText = 'Token required';
+                modalFeedback.innerText = 'Fetching...';
+                const res = await apiRequest('/api/bound-accounts', { access_token: token });
+                if(res.success) modalFeedback.innerHTML = `<div><strong>Bound:</strong> ${res.bound_accounts.join(', ') || 'None'}<br><strong>Available:</strong> ${res.available_platforms.join(', ') || 'None'}</div>`;
+                else modalFeedback.innerHTML = `❌ ${res.error}`;
+            });
+            modal.style.display = 'flex'; return;
+        }
+        modal.style.display = 'flex';
+    }
+</script>
+</body>
+</html>
